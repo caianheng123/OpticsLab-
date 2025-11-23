@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Camera, Eye, Search, Zap, ArrowRight, PlayCircle } from 'lucide-react';
+import { BookOpen, Camera, Eye, Search, Zap, ArrowRight, PlayCircle, PenTool, TrendingUp, AlertTriangle } from 'lucide-react';
 import { LensType } from '../types';
 
 interface WikiArticleProps {
@@ -27,249 +27,256 @@ const WikiArticle: React.FC<WikiArticleProps> = ({
   };
 
   return (
-    <article className="prose prose-slate max-w-none lg:prose-lg bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+    <article className="prose prose-slate max-w-none lg:prose-lg bg-white p-8 rounded-xl shadow-sm border border-slate-200 font-sans">
+      {/* Header */}
       <div className="border-b border-slate-200 pb-6 mb-8">
-        <h1 className="text-4xl font-extrabold text-slate-900 mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 to-blue-600 inline-block">
-          透镜成像规律全解
+        <div className="flex items-center gap-3 mb-4">
+            <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                物理学霸笔记
+            </span>
+            <span className="text-slate-400 text-sm">Last updated: 2024</span>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 leading-tight">
+          凸透镜成像规律：<span className="text-indigo-600">从原理到口诀的全总结</span>
         </h1>
-        <p className="text-xl text-slate-600 leading-relaxed">
-          从原理到应用，带你彻底搞懂初中物理核心考点。结合交互式实验，让光学知识看得见、摸得着。
+        <p className="text-lg text-slate-600 leading-relaxed">
+          这篇笔记整理了透镜成像的核心考点，包括三条特殊光线作图法、静态成像规律表以及动态变化规律。结合上方的实验室，助你彻底攻克光学难点。
         </p>
       </div>
 
-      <nav className="bg-slate-50 p-4 rounded-lg border border-slate-100 mb-8 not-prose">
-        <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">目录 Guide</h3>
-        <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm font-medium text-indigo-600">
-            <li><a href="#section-basics" className="hover:underline hover:text-indigo-800">1. 透镜基础知识</a></li>
-            <li><a href="#section-convex" className="hover:underline hover:text-indigo-800">2. 凸透镜成像的五种情况 (核心)</a></li>
-            <li><a href="#section-concave" className="hover:underline hover:text-indigo-800">3. 凹透镜成像规律</a></li>
-            <li><a href="#section-summary" className="hover:underline hover:text-indigo-800">4. 总结与记忆口诀</a></li>
-        </ul>
-      </nav>
+      {/* Table of Contents */}
+      <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 mb-10 not-prose">
+        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">笔记目录 / Contents</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-8 text-sm font-medium">
+            <a href="#part1" className="flex items-center gap-2 text-slate-700 hover:text-indigo-600 transition-colors">
+                <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">1</span>
+                三条特殊光线 (作图基础)
+            </a>
+            <a href="#part2" className="flex items-center gap-2 text-slate-700 hover:text-indigo-600 transition-colors">
+                <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">2</span>
+                两个“分界点” (f 与 2f)
+            </a>
+            <a href="#part3" className="flex items-center gap-2 text-slate-700 hover:text-indigo-600 transition-colors">
+                <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">3</span>
+                静态成像规律表 (核心背诵)
+            </a>
+            <a href="#part4" className="flex items-center gap-2 text-slate-700 hover:text-indigo-600 transition-colors">
+                <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">4</span>
+                动态变化规律 (物近像远)
+            </a>
+        </div>
+      </div>
 
-      <section id="section-basics">
-        <h2>1. 透镜基础知识</h2>
+      {/* Part 1: Special Rays */}
+      <section id="part1">
+        <h2 className="flex items-center gap-3 text-slate-800">
+            <PenTool className="w-6 h-6 text-indigo-500" />
+            1. 三条特殊光线
+        </h2>
         <p>
-          透镜是利用光的<strong>折射</strong>原理制成的光学元件。在初中物理中，我们主要研究两类透镜：<strong>凸透镜</strong>和<strong>凹透镜</strong>。
+            理解成像的本质是光的折射。在作图时，我们只需要画出物体顶端发出的三条特殊光线中的两条，它们的交点就是像的位置。
         </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6 not-prose">
-            <div className="bg-blue-50 p-5 rounded-xl border border-blue-100">
-                <h3 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-blue-500"></div> 凸透镜 (Convex Lens)
-                </h3>
-                <ul className="text-sm text-blue-800 space-y-2">
-                    <li><strong>特点：</strong>中间厚、边缘薄。</li>
-                    <li><strong>光学性质：</strong>对光线有<strong>会聚</strong>作用。</li>
-                    <li><strong>焦点 (F)：</strong>平行于主光轴的光线经折射后会聚于一点。</li>
-                </ul>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 not-prose my-6">
+            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="h-1 w-8 bg-red-500 rounded-full mb-3"></div>
+                <h4 className="font-bold text-slate-800 mb-2">光线一：平行入射</h4>
+                <p className="text-sm text-slate-600">平行于主光轴的光线，折射后<strong>过焦点</strong>。</p>
             </div>
-            <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-100">
-                <h3 className="font-bold text-emerald-900 mb-2 flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-emerald-500"></div> 凹透镜 (Concave Lens)
-                </h3>
-                <ul className="text-sm text-emerald-800 space-y-2">
-                    <li><strong>特点：</strong>中间薄、边缘厚。</li>
-                    <li><strong>光学性质：</strong>对光线有<strong>发散</strong>作用。</li>
-                    <li><strong>焦点 (F)：</strong>平行光经折射后发散，其反向延长线交于一点（虚焦点）。</li>
-                </ul>
+            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="h-1 w-8 bg-emerald-500 rounded-full mb-3"></div>
+                <h4 className="font-bold text-slate-800 mb-2">光线二：过光心</h4>
+                <p className="text-sm text-slate-600">穿过透镜中心（光心）的光线，<strong>传播方向不变</strong>。</p>
+            </div>
+            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="h-1 w-8 bg-blue-500 rounded-full mb-3"></div>
+                <h4 className="font-bold text-slate-800 mb-2">光线三：过焦点</h4>
+                <p className="text-sm text-slate-600">从焦点发出（或经过焦点）的光线，折射后<strong>平行射出</strong>。</p>
             </div>
         </div>
-
-        <h3>关键术语定义</h3>
-        <ul>
-            <li><strong>光心 (O)：</strong>透镜的中心，通过该点的光线传播方向不变。</li>
-            <li><strong>焦距 (f)：</strong>焦点到光心的距离。它是衡量透镜折光能力的重要参数，焦距越小，折光能力越强。</li>
-            <li><strong>物距 (u)：</strong>物体到透镜光心的距离。</li>
-            <li><strong>像距 (v)：</strong>像到透镜光心的距离。</li>
-        </ul>
       </section>
 
-      <hr className="my-8 border-slate-200" />
-
-      <section id="section-convex">
-        <h2>2. 凸透镜成像的五种情况</h2>
-        <p>
-          这是考试的重中之重。凸透镜的成像性质取决于<strong>物距 (u)</strong> 与 <strong>焦距 (f)</strong> 的关系。
-          我们可以把 \(f\) 和 \(2f\) 看作两个“分界点”。
-        </p>
-
-        {/* Case 1: Camera */}
-        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 my-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-indigo-700 m-0 flex items-center gap-2">
-                    <Camera className="w-6 h-6" /> 情况一：照相机原理 (u &gt; 2f)
-                </h3>
-                <button 
-                    onClick={() => setScenario(LensType.CONVEX, 100, 300, 60)}
-                    className="flex items-center gap-1 bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-full hover:bg-indigo-700 transition-colors shadow-sm"
-                >
-                    <PlayCircle className="w-4 h-4" /> 点击演示
-                </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 text-sm text-slate-700 space-y-2">
-                    <p><strong>条件：</strong>当物体位于二倍焦距以外时（\(u &gt; 2f\)）。</p>
-                    <p><strong>现象：</strong>在透镜另一侧的 \(f\) 和 \(2f\) 之间，成<strong>倒立、缩小</strong>的<strong>实像</strong>。</p>
-                    <p className="bg-indigo-100 p-2 rounded text-indigo-800 font-medium mt-2">
-                        应用：照相机、摄像机、人的眼睛（晶状体）。
+      {/* Part 2: Boundary Points */}
+      <section id="part2">
+        <h2 className="flex items-center gap-3 text-slate-800">
+            <AlertTriangle className="w-6 h-6 text-amber-500" />
+            2. 两个关键“分界点”
+        </h2>
+        <p>在记忆规律前，必须死记硬背这两个分界点，它们是解题的锚点。</p>
+        
+        <div className="my-6 space-y-4 not-prose">
+            <div className="flex items-start gap-4 bg-amber-50 p-4 rounded-lg border border-amber-100">
+                <div className="bg-amber-100 p-2 rounded text-amber-700 font-bold shrink-0">焦点 F</div>
+                <div>
+                    <h4 className="font-bold text-amber-900">虚实像的分界点</h4>
+                    <p className="text-sm text-amber-800 mt-1">
+                        物体在焦点以内（u &lt; f）成虚像；<br/>
+                        物体在焦点以外（u &gt; f）成实像。<br/>
+                        物体在焦点上（u = f）不成像。
                     </p>
                 </div>
-                <div className="bg-white rounded-lg border border-slate-200 p-3 flex flex-col items-center justify-center">
-                    <div className="text-xs text-slate-400 mb-1">示意图</div>
-                    <div className="w-full h-24 bg-slate-100 rounded relative overflow-hidden">
-                        {/* CSS Drawing of diagram */}
-                        <div className="absolute top-1/2 left-0 w-full h-[1px] bg-slate-400"></div>
-                        <div className="absolute top-2 bottom-2 left-1/2 w-[1px] bg-blue-300"></div>
-                        <div className="absolute left-[10%] top-[30%] w-1 h-[20%] bg-red-500"></div>
-                        <div className="absolute right-[30%] top-[45%] w-1 h-[10%] bg-indigo-500"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {/* Case 2: Measuring Focal Length */}
-        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 my-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-indigo-700 m-0 flex items-center gap-2">
-                    <Zap className="w-6 h-6" /> 情况二：测焦距 (u = 2f)
-                </h3>
-                <button 
-                    onClick={() => setScenario(LensType.CONVEX, 100, 200, 60)}
-                    className="flex items-center gap-1 bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-full hover:bg-indigo-700 transition-colors shadow-sm"
-                >
-                    <PlayCircle className="w-4 h-4" /> 点击演示
-                </button>
-            </div>
-            <p className="text-sm text-slate-700">
-                <strong>条件：</strong>当物体恰好位于二倍焦距上时（\(u = 2f\)）。<br/>
-                <strong>现象：</strong>在透镜另一侧 \(2f\) 处，成<strong>倒立、等大</strong>的<strong>实像</strong>。<br/>
-                <strong>重要性：</strong>这是像由“缩小”变“放大”的分界点。
-            </p>
-        </div>
-
-        {/* Case 3: Projector */}
-        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 my-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-indigo-700 m-0 flex items-center gap-2">
-                    <BookOpen className="w-6 h-6" /> 情况三：投影仪原理 (f &lt; u &lt; 2f)
-                </h3>
-                <button 
-                    onClick={() => setScenario(LensType.CONVEX, 100, 150, 40)}
-                    className="flex items-center gap-1 bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-full hover:bg-indigo-700 transition-colors shadow-sm"
-                >
-                    <PlayCircle className="w-4 h-4" /> 点击演示
-                </button>
-            </div>
-             <div className="text-sm text-slate-700 space-y-2">
-                <p><strong>条件：</strong>当物体位于一倍焦距和二倍焦距之间时。</p>
-                <p><strong>现象：</strong>在透镜另一侧 \(2f\) 以外，成<strong>倒立、放大</strong>的<strong>实像</strong>。</p>
-                <p className="bg-indigo-100 p-2 rounded text-indigo-800 font-medium mt-2">
-                    应用：投影仪、幻灯机、电影放映机。
-                </p>
-            </div>
-        </div>
-
-        {/* Case 4: No Image */}
-        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 my-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-slate-600 m-0 flex items-center gap-2">
-                    <Eye className="w-6 h-6" /> 情况四：不成像 (u = f)
-                </h3>
                 <button 
                     onClick={() => setScenario(LensType.CONVEX, 100, 100, 60)}
-                    className="flex items-center gap-1 bg-slate-600 text-white text-xs font-bold px-3 py-1.5 rounded-full hover:bg-slate-700 transition-colors shadow-sm"
+                    className="ml-auto text-xs bg-white text-amber-700 border border-amber-200 px-3 py-1.5 rounded-full hover:bg-amber-100 transition-colors shrink-0"
                 >
-                    <PlayCircle className="w-4 h-4" /> 点击演示
+                    演示 u=f
                 </button>
             </div>
-            <p className="text-sm text-slate-700">
-                <strong>条件：</strong>物体位于焦点上。<br/>
-                <strong>现象：</strong>折射光线平行射出，不能相交，所以<strong>不成像</strong>。<br/>
-                <strong>意义：</strong>这是实像与虚像的分界点。
-            </p>
-        </div>
 
-        {/* Case 5: Magnifying Glass */}
-        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 my-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-indigo-700 m-0 flex items-center gap-2">
-                    <Search className="w-6 h-6" /> 情况五：放大镜原理 (u &lt; f)
-                </h3>
+            <div className="flex items-start gap-4 bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                <div className="bg-indigo-100 p-2 rounded text-indigo-700 font-bold shrink-0">二倍焦距 2F</div>
+                <div>
+                    <h4 className="font-bold text-indigo-900">放大/缩小像的分界点</h4>
+                    <p className="text-sm text-indigo-800 mt-1">
+                        物体在2倍焦距外，成缩小像；<br/>
+                        物体在2倍焦距内，成放大像；<br/>
+                        物体在2倍焦距上，成等大像。
+                    </p>
+                </div>
                 <button 
-                    onClick={() => setScenario(LensType.CONVEX, 100, 60, 40)}
-                    className="flex items-center gap-1 bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-full hover:bg-indigo-700 transition-colors shadow-sm"
+                    onClick={() => setScenario(LensType.CONVEX, 100, 200, 60)}
+                    className="ml-auto text-xs bg-white text-indigo-700 border border-indigo-200 px-3 py-1.5 rounded-full hover:bg-indigo-100 transition-colors shrink-0"
                 >
-                    <PlayCircle className="w-4 h-4" /> 点击演示
+                    演示 u=2f
                 </button>
-            </div>
-             <div className="text-sm text-slate-700 space-y-2">
-                <p><strong>条件：</strong>当物体位于一倍焦距以内时。</p>
-                <p><strong>现象：</strong>在透镜同侧成<strong>正立、放大</strong>的<strong>虚像</strong>。</p>
-                <p>注意：虚像不能呈现在光屏上，只能透过透镜观察。</p>
-                <p className="bg-indigo-100 p-2 rounded text-indigo-800 font-medium mt-2">
-                    应用：放大镜、老花镜。
-                </p>
             </div>
         </div>
       </section>
 
-      <section id="section-concave">
-        <h2>3. 凹透镜成像规律</h2>
-        <p>
-            相比凸透镜，凹透镜的规律非常简单。
+      {/* Part 3: The 5 Cases Table */}
+      <section id="part3">
+        <h2 className="flex items-center gap-3 text-slate-800">
+            <BookOpen className="w-6 h-6 text-indigo-500" />
+            3. 静态成像规律表 (必考)
+        </h2>
+        <p>这是所有光学题的基础。点击右侧按钮，在上方实验室中观察现象。</p>
+        
+        <div className="not-prose overflow-hidden rounded-xl border border-slate-200 shadow-sm my-6">
+            <table className="w-full text-sm text-left">
+                <thead className="bg-slate-100 text-slate-700 font-bold">
+                    <tr>
+                        <th className="p-4">物距 (u)</th>
+                        <th className="p-4">像的性质</th>
+                        <th className="p-4 hidden sm:table-cell">应用</th>
+                        <th className="p-4 text-right">实验操作</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                    {/* u > 2f */}
+                    <tr className="group hover:bg-indigo-50/30 transition-colors">
+                        <td className="p-4 font-mono text-indigo-600 font-bold">u &gt; 2f</td>
+                        <td className="p-4">
+                            <span className="block font-bold text-slate-700">倒立、缩小、实像</span>
+                            <span className="text-xs text-slate-400">像距 f &lt; v &lt; 2f</span>
+                        </td>
+                        <td className="p-4 hidden sm:table-cell text-slate-600">照相机 📷</td>
+                        <td className="p-4 text-right">
+                            <button onClick={() => setScenario(LensType.CONVEX, 100, 300, 60)} className="text-indigo-600 hover:bg-indigo-100 p-2 rounded-full transition-colors">
+                                <PlayCircle className="w-5 h-5" />
+                            </button>
+                        </td>
+                    </tr>
+                    {/* f < u < 2f */}
+                    <tr className="group hover:bg-indigo-50/30 transition-colors">
+                        <td className="p-4 font-mono text-indigo-600 font-bold">f &lt; u &lt; 2f</td>
+                        <td className="p-4">
+                            <span className="block font-bold text-slate-700">倒立、放大、实像</span>
+                            <span className="text-xs text-slate-400">像距 v &gt; 2f</span>
+                        </td>
+                        <td className="p-4 hidden sm:table-cell text-slate-600">投影仪 📽️</td>
+                        <td className="p-4 text-right">
+                            <button onClick={() => setScenario(LensType.CONVEX, 100, 150, 50)} className="text-indigo-600 hover:bg-indigo-100 p-2 rounded-full transition-colors">
+                                <PlayCircle className="w-5 h-5" />
+                            </button>
+                        </td>
+                    </tr>
+                    {/* u < f */}
+                    <tr className="group hover:bg-indigo-50/30 transition-colors">
+                        <td className="p-4 font-mono text-indigo-600 font-bold">u &lt; f</td>
+                        <td className="p-4">
+                            <span className="block font-bold text-slate-700">正立、放大、虚像</span>
+                            <span className="text-xs text-slate-400">像物同侧</span>
+                        </td>
+                        <td className="p-4 hidden sm:table-cell text-slate-600">放大镜 🔍</td>
+                        <td className="p-4 text-right">
+                            <button onClick={() => setScenario(LensType.CONVEX, 100, 60, 40)} className="text-indigo-600 hover:bg-indigo-100 p-2 rounded-full transition-colors">
+                                <PlayCircle className="w-5 h-5" />
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+      </section>
+
+      {/* Part 4: Dynamic Laws */}
+      <section id="part4">
+        <h2 className="flex items-center gap-3 text-slate-800">
+            <TrendingUp className="w-6 h-6 text-indigo-500" />
+            4. 动态变化规律 (难点)
+        </h2>
+        <p>当物体移动时，像怎么动？这是选择题和实验题的压轴考点。</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-8 not-prose">
+            <div className="bg-gradient-to-br from-indigo-600 to-violet-700 text-white p-6 rounded-xl shadow-lg relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <Camera className="w-24 h-24" />
+                </div>
+                <h3 className="text-xl font-bold mb-4 border-b border-indigo-400 pb-2">成实像时 (u &gt; f)</h3>
+                <div className="text-lg font-medium space-y-4">
+                    <p>口诀：<span className="text-yellow-300 font-bold text-2xl">物近 像远 像变大</span></p>
+                    <p className="text-sm opacity-90 leading-relaxed">
+                        当物体靠近透镜（u↓）时，像会远离透镜（v↑），同时像会变大。
+                        <br/>反之亦然。
+                    </p>
+                </div>
+                <button 
+                    onClick={() => {
+                        setScenario(LensType.CONVEX, 100, 300, 60);
+                        setTimeout(() => scrollToSim(), 100);
+                        // Hint user to drag
+                    }}
+                    className="mt-6 bg-white/20 hover:bg-white/30 text-white text-sm py-2 px-4 rounded-lg w-full transition-colors flex items-center justify-center gap-2"
+                >
+                    <PlayCircle className="w-4 h-4" /> 试一试：拖动蜡烛靠近透镜
+                </button>
+            </div>
+
+            <div className="bg-gradient-to-br from-emerald-600 to-teal-700 text-white p-6 rounded-xl shadow-lg relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <Search className="w-24 h-24" />
+                </div>
+                <h3 className="text-xl font-bold mb-4 border-b border-emerald-400 pb-2">成虚像时 (u &lt; f)</h3>
+                <div className="text-lg font-medium space-y-4">
+                    <p>口诀：<span className="text-yellow-300 font-bold text-2xl">物近 像近 像变小</span></p>
+                    <p className="text-sm opacity-90 leading-relaxed">
+                        当物体在焦点内靠近透镜（u↓）时，像也会靠近透镜，且像变小（但始终比物体大）。
+                        <br/>(注意：这里的变小是指相对于原来的像变小了)
+                    </p>
+                </div>
+                <button 
+                    onClick={() => {
+                        setScenario(LensType.CONVEX, 100, 90, 40);
+                        setTimeout(() => scrollToSim(), 100);
+                    }}
+                    className="mt-6 bg-white/20 hover:bg-white/30 text-white text-sm py-2 px-4 rounded-lg w-full transition-colors flex items-center justify-center gap-2"
+                >
+                    <PlayCircle className="w-4 h-4" /> 试一试：在焦点内移动
+                </button>
+            </div>
+        </div>
+      </section>
+
+      {/* Summary Footer */}
+      <div className="mt-12 bg-slate-50 rounded-2xl p-8 text-center border border-slate-100">
+        <h3 className="text-xl font-bold text-slate-800 mb-4">学以致用</h3>
+        <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
+            纸上得来终觉浅。请点击下方的按钮，回到顶部的“自由实验室”，试着遮住透镜的一半，看看像会发生什么变化？（提示：像依然完整，但变暗了）
         </p>
-        <div className="bg-emerald-50 rounded-xl p-6 border border-emerald-100 my-6 shadow-sm">
-             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-emerald-800 m-0">
-                    始终唯一：正立、缩小、虚像
-                </h3>
-                <button 
-                    onClick={() => setScenario(LensType.CONCAVE, 100, 200, 80)}
-                    className="flex items-center gap-1 bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-full hover:bg-emerald-700 transition-colors shadow-sm"
-                >
-                    <PlayCircle className="w-4 h-4" /> 点击演示
-                </button>
-            </div>
-            <p className="text-sm text-emerald-900">
-                无论物体距离凹透镜多远，它始终成<strong>正立、缩小</strong>的<strong>虚像</strong>。像和物体在透镜的同一侧。
-                <br/><br/>
-                <strong>应用：</strong>近视眼镜。
-            </p>
-        </div>
-      </section>
-
-      <section id="section-summary">
-        <h2>4. 总结与记忆口诀</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-6 rounded-xl shadow-md">
-                <h3 className="text-white text-lg font-bold mb-4 border-b border-indigo-400 pb-2">口诀一：一倍二倍分界限</h3>
-                <p className="font-medium leading-loose">
-                    一倍焦距分虚实，<br/>
-                    二倍焦距分大小。<br/>
-                    实像倒立异侧倒，<br/>
-                    虚像正立同侧正。
-                </p>
-            </div>
-            <div className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white p-6 rounded-xl shadow-md">
-                <h3 className="text-white text-lg font-bold mb-4 border-b border-blue-400 pb-2">口诀二：物近像远像变大</h3>
-                <p className="font-medium leading-loose">
-                    成实像时：<br/>
-                    物近像远像变大，<br/>
-                    物远像近像变小。
-                </p>
-                <p className="text-xs text-blue-100 mt-2 opacity-80">(注：物近指物体靠近焦点)</p>
-            </div>
-        </div>
-      </section>
-      
-      <div className="mt-12 text-center">
-        <p className="text-slate-500 mb-4">掌握了吗？回到上方实验室自己动手试一试！</p>
         <button 
             onClick={scrollToSim}
-            className="inline-flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-full font-bold hover:bg-slate-800 transition-all hover:scale-105"
+            className="inline-flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-full font-bold hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg hover:-translate-y-1"
         >
-            回到实验室 <ArrowRight className="w-4 h-4" />
+            回到实验室验证 <ArrowRight className="w-4 h-4" />
         </button>
       </div>
 

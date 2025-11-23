@@ -41,16 +41,40 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   useEffect(() => {
     const loadVoices = () => {
       const voices = window.speechSynthesis.getVoices();
-      // Select a standard Chinese voice
-      const bestVoice = voices.find(v => v.lang === 'zh-CN' && !v.name.includes('Yaoyao')) 
-                     || voices.find(v => v.lang === 'zh-CN');
-      if (bestVoice) {
-        setSelectedVoice(bestVoice);
+      
+      // Filter for Chinese voices
+      const cnVoices = voices.filter(v => v.lang === 'zh-CN' || v.lang === 'zh-TW' || v.lang === 'zh-HK');
+      
+      // Strategy: Find a "Middle School Boy" suitable voice.
+      // Priority 1: Microsoft Kangkang (Windows default Male)
+      let target = cnVoices.find(v => v.name.includes('Kangkang'));
+      
+      // Priority 2: Look for "Male" tag in name
+      if (!target) {
+         target = cnVoices.find(v => v.name.toLowerCase().includes('male'));
+      }
+      
+      // Priority 3: Fallback - Prefer voices that are NOT known female voices (Yaoyao, Huihui, Ting-Ting)
+      if (!target) {
+         const knownFemale = ['Yaoyao', 'Huihui', 'Ting-Ting', 'Lili', 'Meijia'];
+         target = cnVoices.find(v => !knownFemale.some(n => v.name.includes(n)));
+      }
+      
+      // Priority 4: Last resort
+      if (!target && cnVoices.length > 0) {
+          target = cnVoices[0];
+      }
+
+      if (target) {
+        setSelectedVoice(target);
       }
     };
     
+    // Trigger load
     loadVoices();
-    window.speechSynthesis.onvoiceschanged = loadVoices;
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
     
     return () => {
       window.speechSynthesis.onvoiceschanged = null;
@@ -190,8 +214,14 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'zh-CN';
-            utterance.rate = 0.9; 
-            utterance.pitch = 1.0; 
+            
+            // "Middle School Boy" Configuration
+            // Rate: 1.1 (Energetic)
+            // Pitch: 1.1 (Younger than adult male)
+            // This works best if we found "Microsoft Kangkang". 
+            // If we found a female voice, it will just sound faster/higher, which is acceptable as fallback.
+            utterance.rate = 1.1; 
+            utterance.pitch = 1.1; 
             utterance.volume = 1.0;
             
             if (selectedVoice) {

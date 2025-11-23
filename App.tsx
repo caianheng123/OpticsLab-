@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { LensType } from './types';
 import SimulationCanvas from './components/SimulationCanvas';
 import ControlPanel from './components/ControlPanel';
@@ -7,7 +7,7 @@ import TheoryPanel from './components/TheoryPanel';
 import VideoResources from './components/VideoResources';
 import AITutor from './components/AITutor';
 import WikiArticle from './components/WikiArticle';
-import { GraduationCap, BookOpen, FlaskConical } from 'lucide-react';
+import { GraduationCap, BookOpen, FlaskConical, Maximize, Minimize } from 'lucide-react';
 
 type AppMode = 'LAB' | 'WIKI';
 
@@ -21,6 +21,7 @@ const App: React.FC = () => {
   
   // Narration state
   const [narration, setNarration] = useState<string>("");
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const canvasRef = useRef<HTMLDivElement>(null);
 
@@ -30,6 +31,29 @@ const App: React.FC = () => {
     // For better UX, let's keep the user in their mode but ensure the canvas is in view
     // Since we embedded the canvas in the wiki view (top), we just scroll up.
     canvasRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  // Handle Fullscreen events
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
+  }, []);
+
+  const toggleFullScreen = () => {
+    if (!canvasRef.current) return;
+    
+    if (!document.fullscreenElement) {
+        canvasRef.current.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
   };
 
   return (
@@ -83,7 +107,7 @@ const App: React.FC = () => {
         */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
             <div className="lg:col-span-8">
-                <div ref={canvasRef} className="h-[400px] lg:h-[480px] shadow-xl rounded-2xl overflow-hidden bg-white ring-1 ring-slate-900/5 z-10 relative">
+                <div ref={canvasRef} className="h-[400px] lg:h-[480px] shadow-xl rounded-2xl overflow-hidden bg-white ring-1 ring-slate-900/5 z-10 relative group">
                     <SimulationCanvas 
                         lensType={lensType}
                         focalLength={focalLength}
@@ -93,9 +117,19 @@ const App: React.FC = () => {
                         setFocalLength={setFocalLength}
                         narration={narration}
                     />
-                    {/* Mode indicator overlay */}
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-500 border border-slate-200 shadow-sm">
-                        {mode === 'WIKI' ? '📖 百科演示模式' : '🧪 自由探索模式'}
+                    
+                    {/* Controls Overlay (Mode Badge + Fullscreen) */}
+                    <div className="absolute top-4 right-4 flex items-center gap-2 z-30">
+                        <div className="bg-white/90 backdrop-blur px-3 py-1.5 rounded-full text-xs font-bold text-slate-500 border border-slate-200 shadow-sm pointer-events-none select-none">
+                            {mode === 'WIKI' ? '📖 百科演示模式' : '🧪 自由探索模式'}
+                        </div>
+                        <button 
+                            onClick={toggleFullScreen}
+                            className="bg-white/90 hover:bg-white text-slate-500 hover:text-indigo-600 p-1.5 rounded-full border border-slate-200 shadow-sm transition-all hover:scale-105 active:scale-95"
+                            title={isFullScreen ? "退出全屏" : "全屏显示"}
+                        >
+                            {isFullScreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+                        </button>
                     </div>
                 </div>
                 
