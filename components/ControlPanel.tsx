@@ -32,6 +32,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   // Animation refs
   const animationRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
+  const isSpeakingRef = useRef<boolean>(false);
   
   // Voice state
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
@@ -56,7 +57,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     };
   }, []);
 
-  // Animation Loop with Variable Speed for Audio Sync
+  // Animation Loop with Audio Sync and Snap-to-Grid
   useEffect(() => {
     if (isPlaying) {
       lastTimeRef.current = performance.now();
@@ -66,40 +67,60 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         
         // Cap updates
         if (deltaTime >= 16) { 
+            // If speaking, hold position (perfect sync)
+            if (enableAudio && isSpeakingRef.current) {
+                lastTimeRef.current = time;
+                animationRef.current = requestAnimationFrame(animate);
+                return;
+            }
+
             setObjectDistance((prev) => {
                 if (prev <= 30) {
                     setIsPlaying(false);
                     return 30;
                 }
 
-                const u = prev;
                 const f = focalLength;
                 
-                // Slower speed for formal presentation
-                let unitsPerSecond = 25; 
+                // Base speed logic
+                let unitsPerSecond = 30; 
 
                 if (lensType === LensType.CONCAVE) {
-                    unitsPerSecond = 25; 
+                    unitsPerSecond = 30; 
                 } else {
-                    // Convex Logic - stop longer at key points
-                    const distTo2F = Math.abs(u - 2 * f);
-                    const distToF = Math.abs(u - f);
-
-                    if (u > 2 * f + 50) {
-                        unitsPerSecond = 60; // Approach relatively quickly
-                    } else if (distTo2F <= 30) { 
-                        unitsPerSecond = 5; // Very slow near 2f for explanation
-                    } else if (u > f + 30 && u < 2 * f - 30) {
-                        unitsPerSecond = 25; // Moderate between points
-                    } else if (distToF <= 30) {
-                        unitsPerSecond = 5; // Very slow near f
+                    // Convex Logic Speed Profile
+                    if (prev > 2 * f + 50) {
+                        unitsPerSecond = 60; // Travel to start fast
+                    } else if (Math.abs(prev - 2 * f) <= 20) {
+                        unitsPerSecond = 15; // Slow down approach
+                    } else if (prev > f + 50 && prev < 2 * f - 50) {
+                        unitsPerSecond = 50; // Travel between 2f and f fast
+                    } else if (Math.abs(prev - f) <= 20) {
+                        unitsPerSecond = 15; // Slow down approach
                     } else {
-                        unitsPerSecond = 15; // Slow finish
+                        unitsPerSecond = 20; // Default
                     }
                 }
 
                 const step = unitsPerSecond * (deltaTime / 1000);
-                return Math.max(30, prev - step);
+                let nextU = prev - step;
+
+                // --- SNAP TO GRID LOGIC FOR PERFECT SYNC ---
+                // If we are passing 2F, snap exactly to 2F
+                if (prev > 2 * f && nextU <= 2 * f + 0.5) {
+                    // We are about to cross or hit 2f
+                    // Force it to exactly 2f so the narration "u=2f" triggers on the exact frame
+                    // The 'useEffect' for narration below will see exactly 2*f and trigger speech.
+                    // The next frame of this loop will see 'isSpeaking=true' and pause here.
+                    return 2 * f;
+                }
+
+                // If we are passing F, snap exactly to F
+                if (prev > f && nextU <= f + 0.5) {
+                    return f;
+                }
+                
+                return Math.max(30, nextU);
             });
             lastTimeRef.current = time;
         }
@@ -112,7 +133,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     }
     
     return () => cancelAnimationFrame(animationRef.current);
-  }, [isPlaying, focalLength, lensType, setObjectDistance]);
+  }, [isPlaying, focalLength, lensType, setObjectDistance, enableAudio]);
 
   // Audio/Text Narration Logic - Formal & Educational
   useEffect(() => {
@@ -120,6 +141,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
+      isSpeakingRef.current = false;
       setNarration("");
       lastZoneRef.current = "";
       return;
@@ -128,34 +150,38 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     let text = "";
     let zone = "";
 
+    // Define Zones precisely so they don't flap
+    const f = focalLength;
+    const u = objectDistance;
+
     if (lensType === LensType.CONCAVE) {
         zone = "concave_all";
         text = "现在演示凹透镜成像。凹透镜对光线具有发散作用。请注意观察，无论物体距离透镜多远，始终在透镜同侧形成正立、缩小的虚像。";
     } else {
-        // Convex Lens Zones 
-        const f = focalLength;
-        const u = objectDistance;
-        
-        if (u > 2 * f + 20) {
+        // Convex Zones
+        // Use exact floating point comparison with small epsilon for the snap points
+        const epsilon = 0.5;
+
+        if (u > 2 * f + epsilon) {
             zone = "u > 2f";
             text = "当物距大于二倍焦距时，凸透镜成倒立、缩小的实像。这一原理被广泛应用于照相机和摄像机中。";
-        } else if (u > 2 * f - 20) {
+        } else if (Math.abs(u - 2 * f) <= epsilon) {
             zone = "u = 2f";
             text = "当物距等于二倍焦距时，像距也等于二倍焦距。此时，凸透镜成倒立、等大的实像。这是测量焦距的重要方法。";
-        } else if (u > f + 20) {
+        } else if (u < 2 * f - epsilon && u > f + epsilon) {
             zone = "f < u < 2f";
             text = "当物距处于一倍焦距和二倍焦距之间时，凸透镜成倒立、放大的实像。投影仪和幻灯机就是利用这一原理制成的。";
-        } else if (u > f - 20) {
+        } else if (Math.abs(u - f) <= epsilon) {
             zone = "u = f";
             text = "当物距等于一倍焦距时，折射光线平行射出，不能成像。此处是实像与虚像的分界点。";
-        } else {
+        } else if (u < f - epsilon) {
             zone = "u < f";
             text = "当物距小于一倍焦距时，凸透镜成正立、放大的虚像。我们需要透过透镜观察。放大镜就是利用这一原理工作的。";
         }
     }
 
     // Trigger update if zone changed
-    if (zone !== lastZoneRef.current) {
+    if (zone && zone !== lastZoneRef.current) {
         lastZoneRef.current = zone;
         setNarration(text);
         
@@ -164,16 +190,35 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'zh-CN';
-            // Adjusted for formal education: slower rate, neutral pitch
-            utterance.rate = 0.85; // Slower, clearer
-            utterance.pitch = 1.0; // Standard pitch
+            utterance.rate = 0.9; 
+            utterance.pitch = 1.0; 
             utterance.volume = 1.0;
             
             if (selectedVoice) {
                 utterance.voice = selectedVoice;
             }
+
+            utterance.onstart = () => {
+                isSpeakingRef.current = true;
+            };
+
+            utterance.onend = () => {
+                isSpeakingRef.current = false;
+            };
+
+            utterance.onerror = () => {
+                 isSpeakingRef.current = false;
+            }
             
             window.speechSynthesis.speak(utterance);
+        } else {
+            // If audio is disabled, simulate a delay
+            isSpeakingRef.current = true;
+            setTimeout(() => {
+                if (isPlaying && zone === lastZoneRef.current) {
+                    isSpeakingRef.current = false;
+                }
+            }, text.length * 150 + 1000);
         }
     }
   }, [objectDistance, focalLength, lensType, isPlaying, enableAudio, selectedVoice, setNarration]);
@@ -203,6 +248,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
     }
+    isSpeakingRef.current = false;
   };
 
   return (
@@ -335,7 +381,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
        <div className="space-y-3">
         <div className="flex justify-between items-center">
           <label className="text-sm font-medium text-slate-600 flex items-center gap-2">
-            <Plus className="w-4 h-4" /> 物体高度 (h)
+            <Plus className="w-4 h-4" /> 蜡烛高度 (h)
           </label>
           <span className="text-xs font-mono bg-indigo-50 text-indigo-700 px-2 py-1 rounded">
             {objectHeight}

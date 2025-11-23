@@ -5,6 +5,7 @@ import ControlPanel from './components/ControlPanel';
 import InfoPanel from './components/InfoPanel';
 import TheoryPanel from './components/TheoryPanel';
 import VideoResources from './components/VideoResources';
+import AITutor from './components/AITutor';
 import { GraduationCap } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -67,10 +68,10 @@ const App: React.FC = () => {
             <TheoryPanel />
           </div>
 
-          {/* Right Column: Controls & Videos (4 cols) */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
-             {/* 1. Controls (Sticky) */}
-             <div className="sticky top-24 z-10">
+          {/* Right Column: Controls & AI & Videos (4 cols) */}
+          <div className="lg:col-span-4">
+             {/* 1. Controls Container */}
+             <div className="flex flex-col gap-6">
                 <ControlPanel 
                     lensType={lensType}
                     setLensType={setLensType}
@@ -82,11 +83,16 @@ const App: React.FC = () => {
                     setObjectHeight={setObjectHeight}
                     setNarration={setNarration}
                 />
+
+                {/* 2. AI Tutor (New) */}
+                <AITutor 
+                    lensType={lensType}
+                    focalLength={focalLength}
+                    objectDistance={objectDistance}
+                />
                 
-                {/* 2. Video Resources (Under Controls) */}
-                <div className="mt-6">
-                    <VideoResources />
-                </div>
+                {/* 3. Video Resources */}
+                <VideoResources />
              </div>
           </div>
 
