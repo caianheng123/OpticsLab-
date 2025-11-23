@@ -109,7 +109,7 @@ const WikiArticle: React.FC<WikiArticleProps> = ({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="md:col-span-2 text-sm text-slate-700 space-y-2">
-                    <p><strong>条件：</strong>当物体位于二倍焦距以外时（\(u > 2f\)）。</p>
+                    <p><strong>条件：</strong>当物体位于二倍焦距以外时（\(u &gt; 2f\)）。</p>
                     <p><strong>现象：</strong>在透镜另一侧的 \(f\) 和 \(2f\) 之间，成<strong>倒立、缩小</strong>的<strong>实像</strong>。</p>
                     <p className="bg-indigo-100 p-2 rounded text-indigo-800 font-medium mt-2">
                         应用：照相机、摄像机、人的眼睛（晶状体）。
